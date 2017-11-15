@@ -7,15 +7,10 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
-
-
-```{r}
 library(tidyverse)
 library(mdsr)
 library(RMySQL)
 ```
-
 
 ```{r}
 db <- dbConnect_scidb(dbname = "imdb")
@@ -32,3 +27,10 @@ db %>%
   dbGetQuery(query)
 ```
 
+```{r}
+# Make scatter plot
+gplot <- ggplot(query, aes(x = production_year, y = gross, size = genre_num)) +
+  geom_jitter(alpha = 0.5)
+
+gplot
+```
