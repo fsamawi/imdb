@@ -20,3 +20,15 @@ library(RMySQL)
 ```{r}
 db <- dbConnect_scidb(dbname = "imdb")
 ```
+
+```{r}
+query <- "SELECT movie_id, COUNT(info), production_year, kind_id 
+            FROM imdb.title
+            LEFT JOIN movie_info ON title.id = movie_info.movie_id
+            WHERE info_type_id = 3 AND kind_id = 1
+            GROUP BY movie_id;"
+
+db %>%
+  dbGetQuery(query)
+```
+
