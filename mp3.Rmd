@@ -1,0 +1,7 @@
+---
+title: "Mini-Project 3"
+author: "Eleanor Ewing, G.E. Ranieri, Farah Samawi"
+date: "11/15/2017"
+output: html_document
+---
+
