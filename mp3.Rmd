@@ -17,20 +17,28 @@ db <- dbConnect_scidb(dbname = "imdb")
 ```
 
 ```{r}
-query <- "SELECT movie_id, COUNT(info), production_year, kind_id 
-            FROM imdb.title
-            LEFT JOIN movie_info ON title.id = movie_info.movie_id
-            WHERE info_type_id = 3 AND kind_id = 1
-            GROUP BY movie_id;"
+query <- "SELECT movie_id, 
+	               COUNT(CASE WHEN info_type_id = 3 THEN info ELSE NULL END) AS genres,
+	               production_year
+          FROM imdb.movie_info
+          LEFT JOIN title ON movie_info.movie_id = title.id
+          WHERE kind_id = 1 AND 
+	              production_year IS NOT NULL AND 
+	              info IS NOT NULL AND 
+	              movie_id IN (SELECT movie_id
+				                     FROM movie_info
+				                     WHERE info_type_id = 8 AND info LIKE '%USA%')
+          GROUP BY movie_id;"
 
-db %>%
+query_data <- db %>%
   dbGetQuery(query)
 ```
 
 ```{r}
 # Make scatter plot
-gplot <- ggplot(query, aes(x = production_year, y = gross, size = genre_num)) +
-  geom_jitter(alpha = 0.5)
+gplot <- ggplot(query_data, aes(x = production_year, y = genres)) +
+  geom_jitter(alpha = 0.1) +
+  geom_vline(xintercept = 1947, color = "red")
 
 gplot
 ```
